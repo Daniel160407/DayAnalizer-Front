@@ -1,0 +1,15 @@
+@font-face {
+    font-family: Outfit;
+    src: url('/font/Outfit-Regular.ttf') format('truetype');
+}
+
+body {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+    font-family: Outfit, 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}

@@ -1,0 +1,80 @@
+$primary-color: #1e1e1e;
+$secondary-color: #333;
+$accent-color: #007bff;
+$text-color: #f0f0f0;
+$error-color: #ff4d4d;
+
+#auth {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#login, #register {
+    background-color: $secondary-color;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+}
+
+h1 {
+    color: $accent-color;
+    margin-bottom: 1.5rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    background-color: $primary-color;
+    border: 1px solid $accent-color;
+    border-radius: 4px;
+    color: $text-color;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+input::placeholder {
+    color: lighten($text-color, 20%);
+}
+
+button {
+    background-color: $accent-color;
+    color: $text-color;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: darken($accent-color, 10%);
+    }
+
+    &:disabled {
+        background-color: lighten($accent-color, 20%);
+        cursor: not-allowed;
+    }
+}
+
+p {
+    color: $text-color;
+    margin: 1rem 0 0;
+
+    &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}
+
+.errorMessage {
+    color: $error-color;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+}

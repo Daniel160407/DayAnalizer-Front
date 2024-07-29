@@ -1,0 +1,90 @@
+.studyDay-table {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #1e1e1e;
+    padding-top: 10px;
+    padding-left: 40px;
+    padding-bottom: 20px;
+    padding-right: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+    }
+}
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 14px); /* 12 columns for 12 months */
+    grid-template-rows: repeat(8, 14px); /* 7 days + 1 header row */
+    grid-gap: 2px;
+    justify-content: center;
+}
+
+.day {
+    width: 14px;
+    height: 14px;
+    background-color: #3a3a3a;
+    border-radius: 3px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.day.low {
+    background-color: #f44336;
+}
+
+.day.medium {
+    background-color: #ff9800;
+}
+
+.day.good {
+    background-color: #ffc107;
+}
+
+.day.high {
+    background-color: #4caf50;
+}
+
+.day.none {
+    background-color: #3a3a3a;
+}
+
+.todaysRating {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+    div {
+        width: 40px;  // Adjusted size for better visibility
+        height: 40px; // Adjusted size for better visibility
+        margin: 0 10px; // Increased spacing between buttons
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+
+        &.rating-low {
+            background-color: #f44336; // Red for low rating
+        }
+
+        &.rating-medium {
+            background-color: #ff9800; // Orange for medium rating
+        }
+
+        &.rating-good {
+            background-color: #ffc107; // Yellow for good rating
+        }
+
+        &.rating-high {
+            background-color: #4caf50; // Green for high rating
+        }
+
+        &:hover {
+            transform: scale(1.2); // Enlarge on hover
+        }
+    }
+}
