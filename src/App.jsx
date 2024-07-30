@@ -1,14 +1,14 @@
+import AddTable from './components/Buttons'
 import Header from './components/Header'
-import SpiritualLifeTable from './components/SpiritualLifeTable'
-import StudyTable from './components/StudyTable'
+import Tables from './components/Tables'
 
 function App() {
 
   return (
     <>
       <Header/>
-      <StudyTable/>
-      <SpiritualLifeTable/>
+      <Tables/>
+      <AddTable/>
     </>
   )
 }

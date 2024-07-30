@@ -1,5 +1,5 @@
 $primary-color: #1e1e1e;
-$secondary-color: #333;
+$secondary-color: #1e1e1e;
 $accent-color: #007bff;
 $text-color: #f0f0f0;
 $error-color: #ff4d4d;
@@ -8,13 +8,14 @@ $error-color: #ff4d4d;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 10px;
 }
 
 #login, #register {
     background-color: $secondary-color;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     width: 300px;
     text-align: center;
 }
