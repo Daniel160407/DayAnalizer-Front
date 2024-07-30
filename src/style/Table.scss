@@ -11,6 +11,55 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     color: #ffffff;
 
+    .editForm {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .saveBtn {
+            background-color: #28a745;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+
+            &:hover {
+                transform: scale(1.02);
+            }
+        }
+
+        .cencelBtn {
+            background-color: #007bff;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+
+            &:hover {
+                transform: scale(1.02);
+            }
+        }
+    }
+
+    .edit {
+        display: flex;
+        gap: 10px;
+
+        .editBtn {
+            background-color: #ffcc00;
+            color: #000000;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
+
+        .deleteBtn {
+            background-color: #f84444;
+            color: #000000;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
+    }
+
     h1 {
         text-align: center;
         margin-bottom: 20px;

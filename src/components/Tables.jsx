@@ -8,6 +8,8 @@ const Tables = () => {
     const [data, setData] = useState([]);
     const [yearData, setYearData] = useState([]);
     const [tables, setTables] = useState([]);
+    const [isEditing, setIsEditing] = useState(null);
+    const [editForm, setEditForm] = useState({ name: "", question: "", userEmail: Cookies.get('email') });
 
     useEffect(() => {
         const fetchTables = async () => {
@@ -18,7 +20,6 @@ const Tables = () => {
                     }
                 });
                 setTables(response.data);
-                // Fetch study days for each table after setting tables
                 response.data.forEach(table => fetchDays(table.name));
             } catch (error) {
                 console.error("Error fetching tables:", error);
@@ -45,7 +46,7 @@ const Tables = () => {
                     'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
                 }
             });
-            // Store data for each table as needed
+
             setData(prevData => [...prevData, { tableName, days: response.data }]);
             console.log(response.data);
         } catch (error) {
@@ -69,7 +70,7 @@ const Tables = () => {
 
         return mergedData.map((day, index) => (
             <div
-                key={`${tableName}-${day.date}`} // Use a unique key
+                key={`${tableName}-${day.date}`}
                 className={`day ${getDayClass(day.rating)}`}
                 title={`${day.date} | Rating: ${day.rating}`}
                 style={{ gridColumn: Math.ceil((index + 1) / 7), gridRow: (index % 7) + 2 }}
@@ -78,8 +79,9 @@ const Tables = () => {
     };
 
     const handleRatingChange = async (rating, tableName) => {
+        const today = format(new Date(), 'yyyy-MM-dd');
         const day = {
-            date: format(new Date(), 'yyyy-MM-dd'),
+            date: today,
             rating: rating,
             type: tableName,
             userEmail: Cookies.get('email'),
@@ -92,16 +94,22 @@ const Tables = () => {
                 }
             });
 
-            // Update local data immediately
             setData(prevData => {
                 const updatedData = prevData.map(d => {
                     if (d.tableName === tableName) {
+                        let dayFound = false;
                         const updatedDays = d.days.map(dayData => {
-                            if (dayData.date === day.date) {
-                                return { ...dayData, rating: rating }; // Update the rating
+                            if (dayData.date === today) {
+                                dayFound = true;
+                                return { ...dayData, rating: rating };
                             }
                             return dayData;
                         });
+
+                        if (!dayFound) {
+                            updatedDays.push({ date: today, rating: rating });
+                        }
+
                         return { ...d, days: updatedDays };
                     }
                     return d;
@@ -113,27 +121,91 @@ const Tables = () => {
         }
     };
 
+    const handleEdit = (table) => {
+        setIsEditing(table.name);
+        setEditForm({ name: table.name, question: table.question });
+    };
+
+    const handleEditChange = (e) => {
+        setEditForm({ ...editForm, [e.target.name]: e.target.value });
+    };
+
+    const handleEditSubmit = async (e, table) => {
+        e.preventDefault();
+
+        table.userEmail = Cookies.get('email');
+        const data = [table, editForm];
+        try {
+            await axios.put(`http://localhost:8080/table`, data, {
+                headers: {
+                    'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
+                }
+            });
+            setTables(tables.map(t => t.name === table.name ? { ...t, ...editForm } : t));
+            setIsEditing(null);
+        } catch (error) {
+            console.error("Error updating table:", error);
+        }
+    };
+
+    const handleDelete = async (tableName) => {
+        try {
+            await axios.delete(`http://localhost:8080/table?email=${Cookies.get('email')}&name=${tableName}`, {
+                headers: {
+                    'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
+                }
+            });
+            setTables(tables.filter(table => table.name !== tableName));
+        } catch (error) {
+            console.error("Error deleting table:", error);
+        }
+    };
+
     return (
         <>
-        {tables.map(table => (
-        <div className="table" key={table.name}>
-                <div>
-                    <h1>{table.name}</h1>
-                    <div className="days-grid">
-                        {renderDays(table.name)} {/* Pass table.name as the identifier */}
-                    </div>
-                    <h1>{table.question}</h1>
-                    <div className="todaysRating">
-                        <div className="rating-low" onClick={() => handleRatingChange(1, table.name)}></div>
-                        <div className="rating-medium" onClick={() => handleRatingChange(2, table.name)}></div>
-                        <div className="rating-good" onClick={() => handleRatingChange(3, table.name)}></div>
-                        <div className="rating-high" onClick={() => handleRatingChange(4, table.name)}></div>
-                    </div>
+            {tables.map(table => (
+                <div className="table" key={table.name}>
+                    {isEditing === table.name ? (
+                        <form className="editForm" onSubmit={(e) => handleEditSubmit(e, table)}>
+                            <input
+                                type="text"
+                                name="name"
+                                value={editForm.name}
+                                onChange={handleEditChange}
+                                required
+                            />
+                            <input
+                                type="text"
+                                name="question"
+                                value={editForm.question}
+                                onChange={handleEditChange}
+                                required
+                            />
+                            <button className="saveBtn" type="submit">Save</button>
+                            <button className="cancelBtn" type="button" onClick={() => setIsEditing(null)}>Cancel</button>
+                        </form>
+                    ) : (
+                        <div>
+                            <h1>{table.name}</h1>
+                            <div className="edit">
+                                <button className="editBtn" onClick={() => handleEdit(table)}>Edit</button>
+                                <button className="deleteBtn" onClick={() => handleDelete(table.name)}>Delete</button>
+                            </div>
+                            <div className="days-grid">
+                                {renderDays(table.name)}
+                            </div>
+                            <h1>{table.question}</h1>
+                            <div className="todaysRating">
+                                <div className="rating-low" onClick={() => handleRatingChange(1, table.name)}></div>
+                                <div className="rating-medium" onClick={() => handleRatingChange(2, table.name)}></div>
+                                <div className="rating-good" onClick={() => handleRatingChange(3, table.name)}></div>
+                                <div className="rating-high" onClick={() => handleRatingChange(4, table.name)}></div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-        </div>
-         ))}
+            ))}
         </>
-        
     );
 }
 
