@@ -4,14 +4,14 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { startOfYear, eachDayOfInterval, format, getDay } from "date-fns";
 
-const StudyTable = () => {
+const SpiritualLifeTable = () => {
     const [data, setData] = useState([]);
     const [yearData, setYearData] = useState([]);
 
     useEffect(() => {
         const fetchStudyDays = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/studyday?email=${Cookies.get('email')}`, {
+                const response = await axios.get(`http://localhost:8080/spiritualLife?email=${Cookies.get('email')}`, {
                     headers: {
                         'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
                     }
@@ -64,17 +64,17 @@ const StudyTable = () => {
         const day = {
             date: format(new Date(), 'yyyy-MM-dd'),
             rating: rating,
-            type: 'study',
+            type: 'spiritual',
             userEmail: Cookies.get('email')
         };
 
         try {
-            await axios.post('http://localhost:8080/studyday', day, {
+            await axios.post('http://localhost:8080/spiritualLife', day, {
                 headers: {
                     'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
                 }
             });
-            const response = await axios.get(`http://localhost:8080/studyday?email=${Cookies.get('email')}`, {
+            const response = await axios.get(`http://localhost:8080/spiritualLife?email=${Cookies.get('email')}`, {
                 headers: {
                     'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
                 }
@@ -87,11 +87,11 @@ const StudyTable = () => {
 
     return (
         <div className="studyDay-table">
-            <h1>Study Days</h1>
+            <h1>Spiritual Life</h1>
             <div className="days-grid">
                 {renderDays()}
             </div>
-            <h1>How have you studied today?</h1>
+            <h1>How did you grow up spiritually today?</h1>
             <div className="todaysRating">
                 <div className="rating-low" onClick={() => handleRatingChange(1)}></div>
                 <div className="rating-medium" onClick={() => handleRatingChange(2)}></div>
@@ -102,4 +102,4 @@ const StudyTable = () => {
     );
 }
 
-export default StudyTable;
+export default SpiritualLifeTable;

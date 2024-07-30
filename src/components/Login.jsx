@@ -32,7 +32,6 @@ const Login = () => {
             if (response.status === 200) {
                 Cookies.set('email', email, { expires: 7 });
                 Cookies.set('password', password, { expires: 7 });
-                Cookies.set('userId', response.data, { expires: 7 });
                 Cookies.set('token', response.headers.authorization, { expires: 7 });
 
                 root.render(
@@ -71,7 +70,7 @@ const Login = () => {
                 setLoginError('Invalid email or password!');
             }
         } catch (error) {
-            setLoginError('An error occurred during login.');
+            setLoginError('Invalid email or password!');
         }
     };
 
@@ -81,7 +80,7 @@ const Login = () => {
         const user = { email, password };
 
         try {
-            const response = await axios.post('http://localhost:8080/register', user);
+            const response = await axios.post('http://localhost:8080/login', user);
 
             if (response.status === 201) {
                 setShowRegistrationForm(false);
@@ -89,7 +88,7 @@ const Login = () => {
                 setRegisterError('This account is already registered!');
             }
         } catch (error) {
-            setRegisterError('An error occurred during registration.');
+            setRegisterError('This account is already registered!');
         }
     };
 

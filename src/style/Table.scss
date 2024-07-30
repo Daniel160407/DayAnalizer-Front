@@ -20,8 +20,8 @@
 
 .days-grid {
     display: grid;
-    grid-template-columns: repeat(12, 14px); /* 12 columns for 12 months */
-    grid-template-rows: repeat(8, 14px); /* 7 days + 1 header row */
+    grid-template-columns: repeat(12, 14px);
+    grid-template-rows: repeat(8, 14px);
     grid-gap: 2px;
     justify-content: center;
 }
@@ -60,31 +60,31 @@
     margin-top: 20px;
 
     div {
-        width: 40px;  // Adjusted size for better visibility
-        height: 40px; // Adjusted size for better visibility
-        margin: 0 10px; // Increased spacing between buttons
+        width: 40px;
+        height: 40px;
+        margin: 0 10px;
         border-radius: 50%;
         cursor: pointer;
         transition: transform 0.3s ease;
 
         &.rating-low {
-            background-color: #f44336; // Red for low rating
+            background-color: #f44336;
         }
 
         &.rating-medium {
-            background-color: #ff9800; // Orange for medium rating
+            background-color: #ff9800;
         }
 
         &.rating-good {
-            background-color: #ffc107; // Yellow for good rating
+            background-color: #ffc107;
         }
 
         &.rating-high {
-            background-color: #4caf50; // Green for high rating
+            background-color: #4caf50;
         }
 
         &:hover {
-            transform: scale(1.2); // Enlarge on hover
+            transform: scale(1.2);
         }
     }
 }

@@ -1,0 +1,21 @@
+.header {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        color: #76c7c0;
+        text-shadow: 0 0 10px rgba(118, 199, 192, 0.8);
+    }
+
+    p {
+        font-size: 1.2em;
+        color: #b0bec5;
+        margin: 0;
+    }
+}
