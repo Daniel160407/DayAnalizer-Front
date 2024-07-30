@@ -1,16 +1,18 @@
-import AddTable from './components/Buttons'
+import { useState } from 'react'
+import Buttons from './components/Buttons'
 import Header from './components/Header'
 import Tables from './components/Tables'
 
 function App() {
+  const [updatedTables, setUpdatedTables] = useState(null);
 
   return (
     <>
       <Header/>
-      <Tables/>
-      <AddTable/>
+      <Tables updatedTables={updatedTables}/>
+      <Buttons setUpdatedTables={setUpdatedTables}/>
     </>
   )
 }
 
-export default App
+export default App;

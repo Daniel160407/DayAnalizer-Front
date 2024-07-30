@@ -46,6 +46,16 @@
           border-color: #f39c12;
         }
       }
+
+      .submitButton {
+        background-color: #28a745;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+          background-color: #218838;
+          transform: scale(1.05);
+        }
+      }    
     }
   }
   

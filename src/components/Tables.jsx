@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { startOfYear, eachDayOfInterval, format, getDay } from "date-fns";
 
-const Tables = () => {
+const Tables = ({updatedTables}) => {
     const [data, setData] = useState([]);
     const [yearData, setYearData] = useState([]);
     const [tables, setTables] = useState([]);
@@ -39,6 +39,13 @@ const Tables = () => {
         })));
     }, []);
 
+    useEffect(() => {
+        if(updatedTables){
+            setTables(updatedTables);
+            updatedTables.forEach(table => fetchDays(table.name));
+        }
+    }, [updatedTables]);
+
     const fetchDays = async (tableName) => {
         try {
             const response = await axios.get(`http://localhost:8080/day?email=${Cookies.get('email')}&type=${tableName}`, {
@@ -48,7 +55,6 @@ const Tables = () => {
             });
 
             setData(prevData => [...prevData, { tableName, days: response.data }]);
-            console.log(response.data);
         } catch (error) {
             console.error(`Error fetching study days for table ${tableName}:`, error);
         }
@@ -162,7 +168,7 @@ const Tables = () => {
     };
 
     return (
-        <>
+        <div className="tables">
             {tables.map(table => (
                 <div className="table" key={table.name}>
                     {isEditing === table.name ? (
@@ -205,7 +211,7 @@ const Tables = () => {
                     )}
                 </div>
             ))}
-        </>
+        </div>
     );
 }
 

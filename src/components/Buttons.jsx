@@ -7,7 +7,7 @@ import Login from './Login';
 import Header from './Header';
 import axios from 'axios';
 
-const AddTableForm = () => {
+const AddTableForm = ({setUpdatedTables, setShowAddTableWindow}) => {
     const [name, setName] = useState('');
     const [question, setQuestion] = useState('');
     const [error, setError] = useState('');
@@ -26,8 +26,12 @@ const AddTableForm = () => {
                 headers: {
                     'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
                 }
-            });
-            // Clear input fields after successful submission
+            })
+                .then(response => {
+                    setUpdatedTables(response.data);
+                });
+
+            setShowAddTableWindow(false);
             setName('');
             setQuestion('');
             setError('');
@@ -45,14 +49,14 @@ const AddTableForm = () => {
                 <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
                 <label htmlFor="question">Table question:</label>
                 <input id="question" type="text" value={question} onChange={(e) => setQuestion(e.target.value)} required />
-                <button type="submit" className="submitButton">Submit</button>
+                <button type="submit" className="submitButton">Save</button>
             </form>
             {error && <p className="error">{error}</p>}
         </div>
     );
 };
 
-const AddTable = () => {
+const Buttons = ({setUpdatedTables}) => {
     const [showAddTableWindow, setShowAddTableWindow] = useState(false);
     
     const handleLogOutClick = () => {
@@ -78,10 +82,10 @@ const AddTable = () => {
                 <p>Made with <span className='redHeart'>&#10084;</span> by <a href='https://portfoliodanielabulashvili.netlify.app/' target='_blank'>Daniel</a></p>
             </div>
             {showAddTableWindow && (
-                <AddTableForm/>
+                <AddTableForm setUpdatedTables={setUpdatedTables} setShowAddTableWindow={setShowAddTableWindow}/>
             )}
         </>
     );
 }
 
-export default AddTable;
+export default Buttons;
