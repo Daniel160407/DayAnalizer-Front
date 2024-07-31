@@ -4,12 +4,14 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { startOfYear, eachDayOfInterval, format, getDay } from "date-fns";
 
-const Tables = ({updatedTables}) => {
+const Tables = ({ updatedTables }) => {
     const [data, setData] = useState([]);
     const [yearData, setYearData] = useState([]);
     const [tables, setTables] = useState([]);
     const [isEditing, setIsEditing] = useState(null);
     const [editForm, setEditForm] = useState({ name: "", question: "", userEmail: Cookies.get('email') });
+    const [rating, setRating] = useState({});
+    const [daysAmount, setDaysAmount] = useState(0);
 
     useEffect(() => {
         const fetchTables = async () => {
@@ -37,10 +39,11 @@ const Tables = ({updatedTables}) => {
             rating: 0,
             dayOfWeek: getDay(day)
         })));
+        setDaysAmount(days.length);
     }, []);
 
     useEffect(() => {
-        if(updatedTables){
+        if (updatedTables) {
             setTables(updatedTables);
             updatedTables.forEach(table => fetchDays(table.name));
         }
@@ -83,6 +86,22 @@ const Tables = ({updatedTables}) => {
             ></div>
         ));
     };
+
+    useEffect(() => {
+        const calculateRatings = () => {
+            const newRatings = {};
+            tables.forEach(table => {
+                const tableData = data.find(d => d.tableName === table.name);
+                if (tableData) {
+                    const totalRating = tableData.days.reduce((acc, day) => acc + day.rating, 0);
+                    newRatings[table.name] = totalRating;
+                }
+            });
+            setRating(newRatings);
+        };
+
+        calculateRatings();
+    }, [data, tables]);
 
     const handleRatingChange = async (rating, tableName) => {
         const today = format(new Date(), 'yyyy-MM-dd');
@@ -201,6 +220,7 @@ const Tables = ({updatedTables}) => {
                                 {renderDays(table.name)}
                             </div>
                             <h1>{table.question}</h1>
+                            <p className="rating">{rating[table.name] || 0} / {4 * daysAmount}</p>
                             <div className="todaysRating">
                                 <div className="rating-low" onClick={() => handleRatingChange(1, table.name)}></div>
                                 <div className="rating-medium" onClick={() => handleRatingChange(2, table.name)}></div>

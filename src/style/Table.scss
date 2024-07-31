@@ -43,7 +43,7 @@
             }
         }
 
-        .cencelBtn {
+        .cancelBtn {
             background-color: #007bff;
             transition: background-color 0.3s ease, transform 0.3s ease;
 
@@ -99,26 +99,30 @@
     background-color: #3a3a3a;
     border-radius: 3px;
     transition: background-color 0.3s ease, transform 0.3s ease;
+
+    &.low {
+        background-color: #f44336;
+    }
+
+    &.medium {
+        background-color: #ff9800;
+    }
+
+    &.good {
+        background-color: #ffc107;
+    }
+
+    &.high {
+        background-color: #4caf50;
+    }
+
+    &.none {
+        background-color: #3a3a3a;
+    }
 }
 
-.day.low {
-    background-color: #f44336;
-}
-
-.day.medium {
-    background-color: #ff9800;
-}
-
-.day.good {
-    background-color: #ffc107;
-}
-
-.day.high {
-    background-color: #4caf50;
-}
-
-.day.none {
-    background-color: #3a3a3a;
+.rating {
+    text-align: end;
 }
 
 .todaysRating {
