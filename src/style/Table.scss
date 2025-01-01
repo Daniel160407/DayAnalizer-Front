@@ -7,10 +7,7 @@
     max-width: 800px;
     margin: 20px auto;
     background-color: #1e1e1e;
-    padding-top: 10px;
-    padding-left: 40px;
-    padding-bottom: 20px;
-    padding-right: 40px;
+    padding: 10px 40px 20px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     color: #ffffff;
@@ -36,19 +33,29 @@
 
         .saveBtn {
             background-color: #28a745;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
 
             &:hover {
                 transform: scale(1.02);
+                background-color: #218838;
             }
         }
 
         .cancelBtn {
             background-color: #007bff;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
 
             &:hover {
                 transform: scale(1.02);
+                background-color: #0056b3;
             }
         }
     }
@@ -60,20 +67,28 @@
         .editBtn {
             background-color: #ffcc00;
             color: #000000;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
 
             &:hover {
                 transform: scale(1.05);
+                background-color: #f1c40f;
             }
         }
 
         .deleteBtn {
             background-color: #f84444;
-            color: #000000;
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
 
             &:hover {
                 transform: scale(1.05);
+                background-color: #e41c1c;
             }
         }
     }
@@ -123,6 +138,8 @@
 
 .rating {
     text-align: end;
+    margin-top: 10px;
+    font-weight: bold;
 }
 
 .todaysRating {
@@ -157,5 +174,40 @@
         &:hover {
             transform: scale(1.2);
         }
+    }
+}
+
+.year-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+
+    button {
+        background-color: #0175f0;
+        color: #ffffff;
+        border: none;
+        padding: 10px 15px;
+        margin: 0 10px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+            background-color: #0056b3;
+            transform: scale(1.04);
+        }
+
+        &:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+    }
+
+    span {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ffffff;
     }
 }

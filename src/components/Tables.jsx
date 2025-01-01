@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import '../style/Table.scss';
 import Cookies from "js-cookie";
 import axios from "axios";
-import { startOfYear, eachDayOfInterval, format, getDay } from "date-fns";
+import { startOfYear, eachDayOfInterval, format, getDay, subYears, addYears } from "date-fns";
 
 const Tables = ({ updatedTables }) => {
     const [data, setData] = useState([]);
@@ -10,27 +10,54 @@ const Tables = ({ updatedTables }) => {
     const [tables, setTables] = useState([]);
     const [isEditing, setIsEditing] = useState(null);
     const [editForm, setEditForm] = useState({ name: "", question: "", userEmail: Cookies.get('email') });
-    const [rating, setRating] = useState({});
+    const [ratings, setRatings] = useState({});
     const [daysAmount, setDaysAmount] = useState(0);
+    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
     useEffect(() => {
         const fetchTables = async () => {
             try {
                 const response = await axios.get(`http://localhost:8080/table?email=${Cookies.get('email')}`, {
                     headers: {
-                        'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
+                        'Authorization': `${Cookies.get('token') || ''}`
                     }
                 });
                 setTables(response.data);
-                response.data.forEach(table => fetchDays(table.name));
+                setData([]);
+                response.data.forEach(table => fetchDays(table.name, currentYear));
             } catch (error) {
                 console.error("Error fetching tables:", error);
             }
         };
 
         fetchTables();
+        generateYearData(currentYear);
+    }, [currentYear]);
 
-        const start = startOfYear(new Date());
+    useEffect(() => {
+        if (updatedTables) {
+            setTables(updatedTables);
+            setData([]);
+            updatedTables.forEach(table => fetchDays(table.name, currentYear));
+        }
+    }, [updatedTables, currentYear]);
+
+    useEffect(() => {
+        const calculatedRatings = tables.reduce((acc, table) => {
+            const tableData = data.find(d => d.tableName === table.name);
+            if (tableData) {
+                const totalRating = tableData.days.reduce((sum, day) => sum + day.rating, 0);
+                acc[table.name] = totalRating;
+            } else {
+                acc[table.name] = 0;
+            }
+            return acc;
+        }, {});
+        setRatings(calculatedRatings);
+    }, [data, tables]);
+
+    const generateYearData = (year) => {
+        const start = startOfYear(new Date(year, 0, 1));
         const end = new Date(start);
         end.setFullYear(start.getFullYear() + 1);
         const days = eachDayOfInterval({ start, end });
@@ -40,24 +67,20 @@ const Tables = ({ updatedTables }) => {
             dayOfWeek: getDay(day)
         })));
         setDaysAmount(days.length);
-    }, []);
+    };
 
-    useEffect(() => {
-        if (updatedTables) {
-            setTables(updatedTables);
-            updatedTables.forEach(table => fetchDays(table.name));
-        }
-    }, [updatedTables]);
-
-    const fetchDays = async (tableName) => {
+    const fetchDays = async (tableName, year) => {
         try {
-            const response = await axios.get(`http://localhost:8080/day?email=${Cookies.get('email')}&type=${tableName}`, {
+            const response = await axios.get(`http://localhost:8080/day?email=${Cookies.get('email')}&type=${tableName}&year=${year}`, {
                 headers: {
-                    'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
+                    'Authorization': `${Cookies.get('token') || ''}`
                 }
             });
 
-            setData(prevData => [...prevData, { tableName, days: response.data }]);
+            setData(prevData => [
+                ...prevData.filter(d => d.tableName !== tableName),
+                { tableName, days: response.data }
+            ]);
         } catch (error) {
             console.error(`Error fetching study days for table ${tableName}:`, error);
         }
@@ -87,107 +110,21 @@ const Tables = ({ updatedTables }) => {
         ));
     };
 
-    useEffect(() => {
-        const calculateRatings = () => {
-            const newRatings = {};
-            tables.forEach(table => {
-                const tableData = data.find(d => d.tableName === table.name);
-                if (tableData) {
-                    const totalRating = tableData.days.reduce((acc, day) => acc + day.rating, 0);
-                    newRatings[table.name] = totalRating;
-                }
-            });
-            setRating(newRatings);
-        };
-
-        calculateRatings();
-    }, [data, tables]);
-
-    const handleRatingChange = async (rating, tableName) => {
-        const today = format(new Date(), 'yyyy-MM-dd');
-        const day = {
-            date: today,
-            rating: rating,
-            type: tableName,
-            userEmail: Cookies.get('email'),
-        };
-
-        try {
-            await axios.post('http://localhost:8080/day', day, {
-                headers: {
-                    'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
-                }
-            });
-
-            setData(prevData => {
-                const updatedData = prevData.map(d => {
-                    if (d.tableName === tableName) {
-                        let dayFound = false;
-                        const updatedDays = d.days.map(dayData => {
-                            if (dayData.date === today) {
-                                dayFound = true;
-                                return { ...dayData, rating: rating };
-                            }
-                            return dayData;
-                        });
-
-                        if (!dayFound) {
-                            updatedDays.push({ date: today, rating: rating });
-                        }
-
-                        return { ...d, days: updatedDays };
-                    }
-                    return d;
-                });
-                return updatedData;
-            });
-        } catch (error) {
-            console.error("Error submitting rating:", error);
-        }
+    const handlePreviousYear = () => {
+        setCurrentYear(prevYear => subYears(new Date(prevYear, 0, 1), 1).getFullYear());
     };
 
-    const handleEdit = (table) => {
-        setIsEditing(table.name);
-        setEditForm({ name: table.name, question: table.question });
-    };
-
-    const handleEditChange = (e) => {
-        setEditForm({ ...editForm, [e.target.name]: e.target.value });
-    };
-
-    const handleEditSubmit = async (e, table) => {
-        e.preventDefault();
-
-        table.userEmail = Cookies.get('email');
-        const data = [table, editForm];
-        try {
-            await axios.put(`http://localhost:8080/table`, data, {
-                headers: {
-                    'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
-                }
-            });
-            setTables(tables.map(t => t.name === table.name ? { ...t, ...editForm } : t));
-            setIsEditing(null);
-        } catch (error) {
-            console.error("Error updating table:", error);
-        }
-    };
-
-    const handleDelete = async (tableName) => {
-        try {
-            await axios.delete(`http://localhost:8080/table?email=${Cookies.get('email')}&name=${tableName}`, {
-                headers: {
-                    'Authorization': `${Cookies.get('token') ? Cookies.get('token') : null}`
-                }
-            });
-            setTables(tables.filter(table => table.name !== tableName));
-        } catch (error) {
-            console.error("Error deleting table:", error);
-        }
+    const handleNextYear = () => {
+        setCurrentYear(prevYear => addYears(new Date(prevYear, 0, 1), 1).getFullYear());
     };
 
     return (
         <div className="tables">
+            <div className="year-navigation">
+                <button onClick={handlePreviousYear}>&larr;</button>
+                <span>{currentYear}</span>
+                <button onClick={handleNextYear}>&rarr;</button>
+            </div>
             {tables.map(table => (
                 <div className="table" key={table.name}>
                     {isEditing === table.name ? (
@@ -220,7 +157,7 @@ const Tables = ({ updatedTables }) => {
                                 {renderDays(table.name)}
                             </div>
                             <h1>{table.question}</h1>
-                            <p className="rating">{rating[table.name] || 0} / {4 * daysAmount}</p>
+                            <p className="rating">{ratings[table.name] || 0} / {4 * daysAmount}</p>
                             <div className="todaysRating">
                                 <div className="rating-low" onClick={() => handleRatingChange(1, table.name)}></div>
                                 <div className="rating-medium" onClick={() => handleRatingChange(2, table.name)}></div>
@@ -233,6 +170,6 @@ const Tables = ({ updatedTables }) => {
             ))}
         </div>
     );
-}
+};
 
 export default Tables;
