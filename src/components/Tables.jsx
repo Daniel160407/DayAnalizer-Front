@@ -71,7 +71,7 @@ const Tables = ({ updatedTables }) => {
 
     const fetchDays = async (tableName, year) => {
         try {
-            const response = await axios.get(`http://localhost:8080/day?email=${Cookies.get('email')}&type=${tableName}&year=${year}`, {
+            const response = await axios.get(`http://localhost:8080/day?email=${Cookies.get('email')}&table=${tableName}&year=${year}`, {
                 headers: {
                     'Authorization': `${Cookies.get('token') || ''}`
                 }
@@ -116,6 +116,49 @@ const Tables = ({ updatedTables }) => {
 
     const handleNextYear = () => {
         setCurrentYear(prevYear => addYears(new Date(prevYear, 0, 1), 1).getFullYear());
+    };
+
+    const handleRatingChange = async (rating, tableName) => {
+        const today = format(new Date(), 'yyyy-MM-dd');
+        const day = {
+            date: today,
+            rating: rating,
+            type: tableName,
+            userEmail: Cookies.get('email'),
+        };
+
+        try {
+            await axios.post('http://localhost:8080/day', day, {
+                headers: {
+                    'Authorization': `${Cookies.get('token') || ''}`
+                }
+            });
+
+            setData(prevData => {
+                const updatedData = prevData.map(d => {
+                    if (d.tableName === tableName) {
+                        let dayFound = false;
+                        const updatedDays = d.days.map(dayData => {
+                            if (dayData.date === today) {
+                                dayFound = true;
+                                return { ...dayData, rating: rating };
+                            }
+                            return dayData;
+                        });
+
+                        if (!dayFound) {
+                            updatedDays.push({ date: today, rating: rating });
+                        }
+
+                        return { ...d, days: updatedDays };
+                    }
+                    return d;
+                });
+                return updatedData;
+            });
+        } catch (error) {
+            console.error("Error submitting rating:", error);
+        }
     };
 
     return (
