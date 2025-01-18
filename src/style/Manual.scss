@@ -1,0 +1,78 @@
+.manual {
+    max-width: 400px;
+    margin: 2rem auto;
+    margin-bottom: 12rem;
+    padding: 1.5rem;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background-color: #222;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+    color: #f1f1f1;
+    font-family: Arial, sans-serif;
+
+    h2 {
+        text-align: center;
+        color: #00aaff;
+        margin-bottom: 1.5rem;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        label {
+            font-weight: bold;
+            color: #ccc;
+        }
+
+        select {
+            padding: 0.5rem;
+            font-size: 1rem;
+            color: #f1f1f1;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            outline: none;
+
+            &:focus {
+                border-color: #00aaff;
+                box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+            }
+        }
+
+        .submit-btn {
+            padding: 0.7rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #28a745;
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 5px #1f8035;
+            }
+        }
+    }
+
+    @media (max-width: 600px) {
+        padding: 1rem;
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        select,
+        .submit-btn {
+            font-size: 0.9rem;
+        }
+    }
+}
